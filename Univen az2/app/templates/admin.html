@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Admin Control Desk | UNIVEN{% endblock %}
+{% block content %}
+<section class="page-head"><div><div class="eyebrow">ADMIN / LANDLORD PORTAL</div><h1>Accommodation control desk</h1><p>Review applications, assign rooms, control maintenance and communicate with students.</p></div></section>
+<section class="dashboard-grid">
+<div class="panel span-2"><div class="panel-head"><h2>Applicant inspector</h2><select id="listingFilter"><option value="">All listings</option>{% for l in listings %}<option value="{{l.id}}">{{l.name}}</option>{% endfor %}</select></div>
+<div class="table-wrap"><table><thead><tr><th>Applicant</th><th>Listing</th><th>Funding</th><th>Status</th><th>Action</th></tr></thead><tbody>
+{% for a in applications %}
+<tr data-listing="{{a.listing_id}}"><td>{{a.student.full_name}}<br><small>{{a.student.student_number}} · {{a.student.email}}</small></td><td>{{a.listing.name}}</td><td>{{a.funding_source}}</td><td><span class="status">{{a.status}}</span>{% if a.room_number %}<br>Room {{a.room_number}}{% endif %}</td><td>
+<form class="inline" method="post" action="{{url_for('main.application_decision', application_id=a.id)}}"><button class="button small" name="decision" value="approve">Approve</button><button class="button danger small" name="decision" value="reject">Reject</button></form>
+<form class="inline" method="post" action="{{url_for('main.assign_room', application_id=a.id)}}"><input name="room_number" placeholder="Room" value="{{a.room_number or ''}}" required><button class="button secondary small">Assign</button></form>
+</td></tr>
+{% endfor %}</tbody></table></div></div>
+
+<div class="panel"><div class="panel-head"><h2>Maintenance control</h2></div>
+{% for t in tickets %}<div class="ticket"><strong>{{t.subject}}</strong><p>{{t.application.student.full_name}} · Room {{t.application.room_number}}</p><form method="post" action="{{url_for('main.ticket_status', ticket_id=t.id)}}" class="inline"><select name="status">{% for s in ['Unread','Read','Technician Dispatched','Completed'] %}<option {% if t.status==s %}selected{% endif %}>{{s}}</option>{% endfor %}</select><button class="button small">Update</button></form></div>{% endfor %}
+</div>
+
+<div class="panel"><div class="panel-head"><h2>Broadcast</h2></div><form method="post" action="{{url_for('main.broadcast')}}" class="form-card"><label>Subject<input name="subject" required></label><label>Message<textarea name="body" required></textarea></label><button class="button">Broadcast</button></form></div>
+<div class="panel"><div class="panel-head"><h2>Direct student message</h2></div><form method="post" action="{{url_for('main.admin_message')}}" class="form-card"><label>Student<select name="student_id">{% for s in students %}<option value="{{s.id}}">{{s.full_name}} · {{s.student_number}}</option>{% endfor %}</select></label><label>Subject<input name="subject" required></label><label>Message<textarea name="body" required></textarea></label><button class="button">Send message</button></form></div>
+</section>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Student Registration | UNIVEN{% endblock %}
+{% block content %}
+<section class="form-shell wide">
+<div class="eyebrow">WELCOME , REgister To GEt one step closer to secure your home away from home</div><h1>Create your accommodation account</h1>
+<div class="notice">POPIA disclosure: Personal information and uploaded documents must be processed only for legitimate accommodation administration purposes, with appropriate access controls, retention rules and institutional approval.</div>
+<form method="post" class="form-card two-col">
+<label>Full name<input name="full_name" required maxlength="120"></label>
+<label>SA ID<input name="sa_id" inputmode="numeric" pattern="[0-9]{13}" maxlength="13" required></label>
+<label>Phone<input name="phone" inputmode="numeric" pattern="[0-9]{10}" maxlength="10" required></label>
+<label>Student number<input name="student_number" inputmode="numeric" pattern="[0-9]{1,8}" maxlength="8" required></label>
+<label>Email<input name="email" type="email" placeholder="name@gmail.com or stunumber@mvula.univen.ac.za" required></label>
+<label>PIN<input name="pin" type="password" minlength="4" required></label>
+<label>Confirm PIN<input name="pin_confirm" type="password" minlength="4" required></label>
+<div class="span-2"><button class="button" type="submit">Create account</button></div>
+</form>
+</section>
+{% endblock %}

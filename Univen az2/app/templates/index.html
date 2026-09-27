@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Accommodation Listings | UNIVEN{% endblock %}
+{% block content %}
+<section class="hero">
+  <div>
+    <div class="eyebrow">UNIVEN STUDENT ACCOMMODATION</div>
+    <h1>Find accommodation near the University of Venda.</h1>
+    <p>Browse verified-style listing records, compare amenities, review location details and start an application from one interface.</p>
+    <div class="hero-actions"><a class="button" href="#listings">Browse listings</a><a class="button secondary" href="{{ url_for('main.register') }}">Create student account</a></div>
+  </div>
+  <div class="hero-panel"><span>Secure Your Room TOday</span><p>Applications Currently Open For 2027 </p></div>
+</section>
+
+<section id="listings" class="section">
+  <div class="section-head"><div><div class="eyebrow">ACCOMMODATION DIRECTORY</div><h2>Available listing records</h2></div><p>=======.</p></div>
+  <div class="grid listings">
+  {% for item in listings %}
+    <article class="card listing-card">
+      <div class="carousel" data-carousel>
+        {% for n in range(1,6) %}
+        <img class="{% if n == 1 %}active{% endif %}" src="{{ url_for('static', filename='img/' ~ item.id ~ 'room' ~ n ~ '.jpg') }}" data-fallback alt="Room {{n}} for {{item.name}}">
+        {% endfor %}
+        <button class="carousel-btn prev" data-prev aria-label="Previous image">‹</button>
+        <button class="carousel-btn next" data-next aria-label="Next image">›</button>
+      </div>
+      <div class="card-body">
+        <div class="card-title"><h3>{{item.name}}</h3><span class="price">R {{ "%.0f"|format(item.price) }}/month</span></div>
+        <p>{{item.distance}} · {{item.address}}</p>
+        <div class="tags">{% for tag in item.amenities.split('|') %}<span>{{tag}}</span>{% endfor %}</div>
+        <button class="button full details-btn" data-listing='{{ {"name":item.name,"distance":item.distance,"address":item.address,"contact":item.contact,"price":item.price,"amenities":item.amenities.split("|")}|tojson }}'>View details</button>
+      </div>
+    </article>
+  {% endfor %}
+  </div>
+</section>
+
+<section class="section map-section">
+  <div class="section-head"><div><div class="eyebrow">CAMPUS AREA</div><h2>UNIVEN campus area map</h2></div></div>
+  <div class="map-placeholder">
+
+<section class="mosaic-section">
+        <div class="mosaic-grid">
+            <div class="mosaic-item map">
+                <iframe src="https://maps.google.com/maps?q=university%20of%20venda&t=&z=15&ie=UTF8&iwloc=&output=embed"
+                    width="190%" height="290%" style="border:1;" allowfullscreen="" loading="auto"></iframe>
+     </div>
+</section>
+
+<div id="detailsModal" class="modal" aria-hidden="true"><div class="modal-box"><button class="modal-close">Close</button><div id="modalContent"></div></div></div>
+{% endblock %}

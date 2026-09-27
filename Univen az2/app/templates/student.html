@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Student Portal | UNIVEN{% endblock %}
+{% block content %}
+<section class="page-head"><div><div class="eyebrow">STUDENT PORTAL</div><h1>Welcome, {{user.full_name}}</h1><p>Manage accommodation applications, documents, maintenance and messages.</p></div></section>
+
+<section class="dashboard-grid">
+<div class="panel span-2"><div class="panel-head"><h2>New accommodation application</h2></div>
+<form method="post" action="{{url_for('main.create_application')}}" class="form-card two-col">
+<label>Accommodation<select name="listing_id" required>{% for l in listings %}<option value="{{l.id}}">{{l.name}} · R {{'%.0f'|format(l.price)}}/month</option>{% endfor %}</select></label>
+<label>Funding source<select name="funding_source"><option>NSFAS</option><option>Bursary</option><option>Self-Funded</option></select></label>
+<label>Academic year<input type="number" name="academic_year" min="2027" value="2027" required></label>
+<label>Degree code<input name="degree_code" maxlength="30" required></label>
+<div class="span-2"><button class="button" type="submit">Submit application</button></div>
+</form></div>
+
+<div class="panel span-2"><div class="panel-head"><h2>Application status</h2></div>
+{% if applications %}
+{% for a in applications %}
+<div class="application">
+  <div><strong>#{{a.id}} · {{a.listing.name}}</strong><span class="status {{a.status|lower|replace(' ','-')}}">{{a.status}}</span></div>
+  <p>{{a.academic_year}} · {{a.funding_source}} · {{a.degree_code}}{% if a.room_number %} · Room {{a.room_number}}{% endif %}</p>
+  <div class="tracker"><span class="done">Submitted</span><span class="{% if a.status in ['Approved','Rejected'] %}done{% endif %}">Reviewed</span><span class="{% if a.status == 'Approved' %}done{% endif %}">Room assigned</span></div>
+  <form method="post" action="{{url_for('main.upload_documents', application_id=a.id)}}" enctype="multipart/form-data" class="upload-grid">
+    {% for label in ['ID Copy','Signed Lease','NSFAS Proof','Proof of Registration'] %}
+    <label>{{label}}<input type="file" name="{{label}}" accept=".pdf,.jpg,.jpeg,.png"></label>
+    {% endfor %}
+    <button class="button secondary" type="submit">Upload documents</button>
+  </form>
+</div>
+{% endfor %}
+{% else %}<p>No applications yet.</p>{% endif %}
+</div>
+
+<div class="panel"><div class="panel-head"><h2>Maintenance</h2></div>
+{% set approved = applications|selectattr('status','equalto','Approved')|list %}
+{% if approved %}
+<form method="post" action="{{url_for('main.create_ticket')}}" class="form-card">
+<label>Application<select name="application_id">{% for a in approved %}<option value="{{a.id}}">#{{a.id}} · Room {{a.room_number}}</option>{% endfor %}</select></label>
+<label>Subject<input name="subject" required></label><label>Description<textarea name="description" required></textarea></label>
+<button class="button" type="submit">Create ticket</button>
+</form>
+{% else %}<p>Maintenance unlocks after an application is approved.</p>{% endif %}
+{% for t in tickets %}<div class="ticket"><strong>{{t.subject}}</strong><span class="status">{{t.status}}</span><p>{{t.description}}</p></div>{% endfor %}
+</div>
+
+<div class="panel"><div class="panel-head"><h2>Messages</h2></div>
+<form method="post" action="{{url_for('main.student_message')}}" class="form-card"><label>Subject<input name="subject" required></label><label>Message<textarea name="body" required></textarea></label><button class="button" type="submit">Send to admin</button></form>
+{% for m in messages %}<div class="message"><strong>{{m.subject}}</strong><p>{{m.body}}</p></div>{% endfor %}
+</div>
+</section>
+{% endblock %}

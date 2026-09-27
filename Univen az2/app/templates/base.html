@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}UNIVEN Accommodation{% endblock %}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="{{ url_for('main.index') }}">UNIVEN <span>ACCOMMODATION</span></a>
+  <nav>
+    <a href="{{ url_for('main.index') }}"></a>
+    {% if user and user.role == 'student' %}<a href="{{ url_for('main.student') }}">Student Portal</a>{% endif %}
+    {% if user and user.role == 'admin' %}<a href="{{ url_for('main.admin') }}"></a>{% endif %}
+    {% if user %}<a class="button secondary" href="{{ url_for('main.logout') }}"></a>
+    {% else %}<a class="button secondary" href="{{ url_for('main.login') }}">Login</a><a class="button" href="{{ url_for('main.register') }}">Register</a>{% endif %}
+  </nav>
+</header>
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}<section class="alerts">{% for category, message in messages %}<div class="alert {{category}}">{{message}}</div>{% endfor %}</section>{% endif %}
+{% endwith %}
+<main>{% block content %}{% endblock %}</main>
+<footer>
+  <div><strong>UNIVEN Accommodation</strong><p>Student accommodation..</p></div>
+  <div><strong>Portal Links</strong><a href="https://www.univen.ac.za/" target="_blank">Official UNIVEN portal</a><a href="https://www.univen.ac.za/" target="_blank">University information</a></div>
+  <div><strong>Administration</strong><a href="{{ url_for('main.login') }}">Admin switch</a><p>Legal notice: Verify institutional policies, data retention and POPIA requirements before deployment.</p></div>
+</footer>
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
